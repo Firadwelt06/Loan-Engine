@@ -21,7 +21,7 @@ import shap
 import pandas as pd
 import streamlit as st
 from pathlib import Path
-import base64
+from urllib.parse import quote_plus
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
@@ -52,26 +52,14 @@ st.set_page_config(page_title="Loan Risk Engine", layout="wide")
 
 @st.cache_resource
 def get_engine():
-    # Build connection string from resolved DB_* variables (st.secrets or .env)
-    conn_str = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    connect_args = {}
-
-    if DB_SSL:
-        ca_path = "/app/ca.pem"
-        try:
-            ca_b64 = st.secrets.get("DB_CA_B64")
-        except Exception:
-            ca_b64 = None
-
-        if ca_b64:
-            try:
-                Path(ca_path).write_bytes(base64.b64decode(ca_b64))
-                connect_args = {"ssl": {"ca": ca_path}}
-            except Exception:
-                connect_args = {}
-        else:
-            connect_args = {}
-
+    # quote_plus escapes special characters (e.g. @, /, +, %) that Aiven's
+    # generated passwords often contain — without this, a raw f-string can
+    # silently corrupt the URL and cause a misleading "Access denied" error
+    conn_str = (
+        f"mysql+pymysql://{quote_plus(DB_USER)}:{quote_plus(DB_PASSWORD)}"
+        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
+    connect_args = {"ssl": {"ssl_mode": "REQUIRED"}} if DB_SSL else {}
     return create_engine(conn_str, connect_args=connect_args)
 
 

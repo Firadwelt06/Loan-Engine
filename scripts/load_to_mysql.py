@@ -8,6 +8,7 @@ Loan Risk Engine — Load raw CSV into MySQL
 
 import os
 import pandas as pd
+from urllib.parse import quote_plus
 from sqlalchemy import create_engine, inspect
 from dotenv import load_dotenv
 
@@ -43,7 +44,10 @@ def main():
     if missing:
         raise ValueError(f"CSV is missing expected columns: {missing}")
 
-    conn_str = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    conn_str = (
+        f"mysql+pymysql://{quote_plus(DB_USER)}:{quote_plus(DB_PASSWORD)}"
+        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
     engine = create_engine(conn_str)
 
     # Fail with a clear message if schema.sql wasn't run yet — otherwise

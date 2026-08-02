@@ -21,6 +21,7 @@ import os
 import joblib
 import pandas as pd
 from pathlib import Path
+from urllib.parse import quote_plus
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
@@ -53,7 +54,10 @@ MODEL_DIR = Path(__file__).parent  # always save/load alongside this script
 
 
 def load_data_from_mysql() -> pd.DataFrame:
-    conn_str = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    conn_str = (
+        f"mysql+pymysql://{quote_plus(DB_USER)}:{quote_plus(DB_PASSWORD)}"
+        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
     engine = create_engine(conn_str)
     df = pd.read_sql("SELECT * FROM loans", con=engine)
     print(f"Pulled {len(df)} rows from MySQL.")
@@ -138,3 +142,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
