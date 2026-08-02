@@ -20,6 +20,7 @@ scenario (grade doesn't exist yet at prediction time).
 import os
 import joblib
 import pandas as pd
+import streamlit as st
 from pathlib import Path
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
@@ -37,11 +38,11 @@ from sklearn.metrics import (
 
 load_dotenv()
 
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = int(os.getenv("DB_PORT", 3306))
-DB_NAME = os.getenv("DB_NAME", "loan_engine")
+DB_USER = st.secrets.get("DB_USER", os.getenv("DB_USER", "root"))
+DB_PASSWORD = st.secrets.get("DB_PASSWORD", os.getenv("DB_PASSWORD"))
+DB_HOST = st.secrets.get("DB_HOST", os.getenv("DB_HOST", "localhost"))
+DB_PORT = int(st.secrets.get("DB_PORT", os.getenv("DB_PORT", 3306)))
+DB_NAME = st.secrets.get("DB_NAME", os.getenv("DB_NAME", "loan_engine"))
 
 if not DB_PASSWORD:
     raise ValueError("DB_PASSWORD not set — copy your .env into this folder.")
@@ -142,4 +143,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

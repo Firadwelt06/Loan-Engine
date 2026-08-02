@@ -40,12 +40,12 @@ def get_config(key: str, default=None):
     return os.getenv(key, default)
 
 
-DB_USER = get_config("DB_USER", "root")
-DB_PASSWORD = get_config("DB_PASSWORD")
-DB_HOST = get_config("DB_HOST", "localhost")
-DB_PORT = int(get_config("DB_PORT", 3306))
-DB_NAME = get_config("DB_NAME", "loan_engine")
-DB_SSL = get_config("DB_SSL", "false").lower() == "true"  # set true for Aiven
+DB_USER = st.secrets.get("DB_USER", os.getenv("DB_USER", "root" ))
+DB_PASSWORD = st.secrets.get("DB_PASSWORD", os.getenv("DB_PASSWORD"))
+DB_HOST = st.secrets.get("DB_HOST", os.getenv("DB_HOST", "localhost"))
+DB_PORT = int(st.secrets.get("DB_PORT", os.getenv("DB_PORT", 3306)))
+DB_NAME = st.secrets.get("DB_NAME", os.getenv("DB_NAME", "loan_engine"))
+DB_SSL = st.secrets.get("DB_SSL", "false").lower() == "true"  # set true for Aiven
 
 st.set_page_config(page_title="Loan Risk Engine", layout="wide")
 

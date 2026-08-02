@@ -19,6 +19,7 @@ import joblib
 import shap
 import matplotlib.pyplot as plt
 import pandas as pd
+import streamlit as st
 from pathlib import Path
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
@@ -28,11 +29,12 @@ load_dotenv()
 
 MODEL_DIR = Path(__file__).parent  # rf_model.joblib etc. live alongside this script
 
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = int(os.getenv("DB_PORT", 3306))
-DB_NAME = os.getenv("DB_NAME", "loan_engine")
+DB_USER = st.secrets.get("DB_USER", os.getenv("DB_USER", "root"))
+DB_PASSWORD = st.secrets.get("DB_PASSWORD", os.getenv("DB_PASSWORD"))
+DB_HOST = st.secrets.get("DB_HOST", os.getenv("DB_HOST", "localhost"))
+DB_PORT = int(st.secrets.get("DB_PORT", os.getenv("DB_PORT", 3306)))
+DB_NAME = st.secrets.get("DB_NAME", os.getenv("DB_NAME", "loan_engine"))
+DB_SSL = st.secrets.get("DB_SSL", "false").lower() == "true"  # set true for Aiven
 
 LEAKY_COLUMNS = ["grade_subgrade", "interest_rate"]
 ID_COLUMNS = ["loan_id"]
@@ -115,4 +117,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
