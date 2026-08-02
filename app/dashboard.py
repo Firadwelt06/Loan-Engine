@@ -21,6 +21,7 @@ import shap
 import pandas as pd
 import streamlit as st
 from pathlib import Path
+import base64
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
@@ -51,8 +52,26 @@ st.set_page_config(page_title="Loan Risk Engine", layout="wide")
 
 @st.cache_resource
 def get_engine():
+    # Build connection string from resolved DB_* variables (st.secrets or .env)
     conn_str = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    connect_args = {"ssl": {"ssl_mode": "REQUIRED"}} if DB_SSL else {}
+    connect_args = {}
+
+    if DB_SSL:
+        ca_path = "/app/ca.pem"
+        try:
+            ca_b64 = st.secrets.get("DB_CA_B64")
+        except Exception:
+            ca_b64 = None
+
+        if ca_b64:
+            try:
+                Path(ca_path).write_bytes(base64.b64decode(ca_b64))
+                connect_args = {"ssl": {"ca": ca_path}}
+            except Exception:
+                connect_args = {}
+        else:
+            connect_args = {}
+
     return create_engine(conn_str, connect_args=connect_args)
 
 
