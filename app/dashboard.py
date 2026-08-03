@@ -51,15 +51,22 @@ st.set_page_config(page_title="Loan Risk Engine", layout="wide")
 
 
 @st.cache_resource
+@st.cache_resource
 def get_engine():
-    # quote_plus escapes special characters (e.g. @, /, +, %) that Aiven's
-    # generated passwords often contain — without this, a raw f-string can
-    # silently corrupt the URL and cause a misleading "Access denied" error
+    # Ensure variables are treated as strings before quoting
+    user = str(DB_USER) if DB_USER else ""
+    pwd = str(DB_PASSWORD) if DB_PASSWORD else ""
+    
     conn_str = (
-        f"mysql+pymysql://{quote_plus(DB_USER)}:{quote_plus(DB_PASSWORD)}"
+        f"mysql+pymysql://{quote_plus(user)}:{quote_plus(pwd)}"
         f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
-    connect_args = {"ssl": {"ssl_mode": "REQUIRED"}} if DB_SSL else {}
+    
+    # Auto-enable SSL for Aiven cloud hosts or if DB_SSL is explicitly set to true
+    connect_args = {}
+    if DB_SSL or (DB_HOST and "aivencloud.com" in str(DB_HOST)):
+        connect_args["ssl"] = {"ssl_mode": "REQUIRED"}
+        
     return create_engine(conn_str, connect_args=connect_args)
 
 
