@@ -56,6 +56,15 @@ The strongest legitimate predictors were **debt-to-income ratio** and **credit s
 - **MySQL** — schema design, validated ETL, analytical views
 - **Streamlit** — interactive dashboard with live prediction + explanation
 - **Aiven** — free managed MySQL hosting for the deployed version
+- **Claude (Anthropic)** — AI pair-programming assistant used throughout (see note below)
+
+## AI-Assisted Development
+
+This project was built in collaboration with Claude (Anthropic) as a coding and technical-strategy assistant. AI was used to scaffold boilerplate (SQL schema, connection handling, Streamlit UI), suggest evaluation approaches for the class-imbalance problem, and help debug real deployment issues — including a URL-encoding bug that silently corrupted a database password, and a database-naming mismatch during the Aiven migration.
+
+The judgment calls were mine: identifying and removing the `grade_subgrade`/`interest_rate` leakage, choosing the final feature set, and interpreting what the SHAP output actually meant for the business. Every script here was run and validated against real data before being included — nothing was accepted unchecked.
+
+I'm noting this openly because it reflects how I actually work: using AI as a force-multiplier for speed, while staying responsible for every decision and result in the final product.
 
 ## Repo structure
 
