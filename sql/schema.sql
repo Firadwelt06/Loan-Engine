@@ -1,9 +1,11 @@
 -- ============================================
 -- Loan Risk Engine — Database Schema
 -- ============================================
-
-CREATE DATABASE IF NOT EXISTS loan_engine;
-USE loan_engine;
+-- NOTE: This does NOT create or switch databases. It builds inside
+-- whichever database your connection is already pointed at.
+-- Locally that's whatever DB_NAME you set (e.g. loan_engine).
+-- On Aiven, that's defaultdb (specify it explicitly when connecting —
+-- see migrate_to_aiven.sh).
 
 DROP TABLE IF EXISTS loans;
 

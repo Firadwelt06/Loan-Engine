@@ -1,9 +1,9 @@
 -- ============================================
 -- Loan Risk Engine — Business Question Views
--- Run this AFTER data is loaded into loan_engine.loans
+-- Run this AFTER data is loaded into the loans table.
+-- Does NOT switch databases — connect to the right one explicitly
+-- (see migrate_to_aiven.sh for the Aiven example).
 -- ============================================
-
-USE loan_engine;
 
 -- 1. Default rate by loan purpose
 CREATE OR REPLACE VIEW v_default_by_purpose AS

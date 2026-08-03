@@ -18,7 +18,7 @@ DB_USER = os.getenv("DB_USER", "root")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = int(os.getenv("DB_PORT", 3306))
-DB_NAME = os.getenv("DB_NAME", "loan_engine")
+DB_NAME = os.getenv("DB_NAME", "defaultdb")
 CSV_PATH = os.getenv("CSV_PATH", "loan_dataset_20000.csv")
 
 if not DB_PASSWORD:
@@ -48,7 +48,13 @@ def main():
         f"mysql+pymysql://{quote_plus(DB_USER)}:{quote_plus(DB_PASSWORD)}"
         f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
-    engine = create_engine(conn_str)
+    
+    # Configure SSL mode required by cloud providers like Aiven
+    connect_args = {}
+    if "aivencloud.com" in DB_HOST:
+        connect_args["ssl"] = {"ssl_mode": "REQUIRED"}
+
+    engine = create_engine(conn_str, connect_args=connect_args)
 
     # Fail with a clear message if schema.sql wasn't run yet — otherwise
     # pandas will silently try to auto-create a schema-less 'loans' table,
@@ -76,7 +82,7 @@ def main():
     with engine.connect() as conn:
         result = conn.exec_driver_sql("SELECT COUNT(*) FROM loans")
         count = result.scalar()
-    print(f"Done. {count} rows now in loan_engine.loans.")
+    print(f"Done. {count} rows now in {DB_NAME}.loans.")
 
 if __name__ == "__main__":
     main()
