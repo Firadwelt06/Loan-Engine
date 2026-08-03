@@ -2,7 +2,7 @@
 
 An end-to-end loan default risk engine — raw applicant data in, a live, explainable risk score and portfolio dashboard out.
 
-**[Live dashboard →](#)** *(add your Streamlit Cloud link here once deployed)*
+**[Live dashboard →](#)** *(https://loan-engine.streamlit.app/)*
 
 ---
 
@@ -46,7 +46,7 @@ Raw CSV
 | Logistic Regression (baseline) | ~0.88 | Higher recall on defaults — catches more true defaults, more false positives |
 | Random Forest | ~0.88 | Higher precision — fewer false accusations, catches somewhat fewer true defaults |
 
-*(Fill in your actual final numbers here once you've run the model against your live MySQL data.)*
+*(Final numbers here)*
 
 The strongest legitimate predictors were **debt-to-income ratio** and **credit score** — consistent with what a human underwriter would expect, and consistent with the SQL-layer findings (see `sql/business_views.sql` → `v_default_by_credit_bucket`, `v_default_by_dti_bucket`).
 
